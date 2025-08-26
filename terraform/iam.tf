@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "elasticache" {
 # Instance Profile
 resource "aws_iam_instance_profile" "app_profile" {
   name  = "zalando-app-profile"
-  roles = [aws_iam_role.ec2_role.name]
+  role = aws_iam_role.ec2_role.name
 }
 
 # SNS Topic for Alerts
@@ -52,3 +52,35 @@ resource "aws_sns_topic_subscription" "email" {
   protocol  = "email"
   endpoint  = var.alert_email
 }
+
+
+# IAM ROLE FOR BASTION-HOST
+#========================================
+resource "aws_iam_role" "bastion_role" {
+  name = "bastion-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Principal = { Service = "ec2.amazonaws.com" },
+      Action = "sts:AssumeRole"
+    }]
+  })
+}
+
+# Attach SSM core policy for Session Manager
+resource "aws_iam_role_policy_attachment" "ssm_bastion" {
+  role       = aws_iam_role.bastion_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# Attach EC2 read-only for DescribeImages and instance connect permissions
+resource "aws_iam_role_policy_attachment" "ec2_readonly" {
+  role       = aws_iam_role.bastion_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+}
+#=======================================================================================================
+
+
+
+

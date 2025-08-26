@@ -46,3 +46,38 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   default     = ["10.0.2.0/24"]
 }
+
+# *********************Phase 3****************           Add to existing variables.tf
+variable "db_username" {
+  description = "RDS master username"
+  type        = string
+  default     = "admin"
+}
+
+variable "db_name" {
+  description = "Initial database name"
+  type        = string
+  default     = "zalando_db"
+}
+
+# Add these missing variables to your existing variable.tf
+
+variable "domain_name" {
+  description = "Domain name for DNS and certificates (e.g., example.com)"
+  type        = string
+  default     = "example.com"  # Change to your actual domain
+}
+
+variable "db_password" {
+  description = "RDS master password (keep sensitive)"
+  type        = string
+  sensitive   = true
+  # No default - must be provided via CLI or tfvars for security
+}
+
+variable "alert_email" {
+  description = "Email address for CloudWatch alarms and notifications"
+  type        = string
+  default     = "admin@example.com"  # Change to your email
+}
+

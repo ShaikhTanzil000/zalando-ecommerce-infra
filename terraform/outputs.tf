@@ -50,3 +50,29 @@ output "sns_topic_arn" {
   value       = aws_sns_topic.alerts.arn
 }
 
+
+# Add to existing outputs.tf
+output "rds_endpoint" {
+  description = "RDS PostgreSQL endpoint"
+  value       = aws_db_instance.postgres.endpoint
+}
+
+output "dynamodb_table_name" {
+  description = "DynamoDB table name"
+  value       = aws_dynamodb_table.app_data.name
+}
+
+output "redis_endpoint" {
+  description = "ElastiCache Redis endpoint"
+  value       = aws_elasticache_cluster.redis.cache_nodes[0].address
+}
+
+output "alb_dns_name" {
+  description = "ALB DNS name"
+  value       = aws_lb.app.dns_name
+}
+
+output "route53_zone_id" {
+  description = "Route 53 hosted zone ID"
+  value       = aws_route53_zone.main.zone_id
+}
