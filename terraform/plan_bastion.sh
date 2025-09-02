@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+terraform plan \
+  -target=aws_vpc.main \
+  -target=aws_subnet.public \
+  -target=aws_subnet.private \
+  -target=aws_internet_gateway.igw \
+  -target=aws_eip.nat \
+  -target=aws_nat_gateway.main \
+  -target=aws_route_table.public \
+  -target=aws_route_table.private \
+  -target=aws_route_table_association.public_association \
+  -target=aws_route_table_association.private_association \
+  -target=aws_security_group.bastion_sg \
+  -target=aws_security_group.alb_sg \
+  -target=aws_security_group.app_sg \
+  -target=aws_security_group.rds_sg \
+  -target=aws_security_group.redis_sg \
+  -target=aws_iam_role.ec2_role \
+  -target=aws_iam_instance_profile.app_profile \
+  -target=aws_iam_role.bastion_role \
+  -target=aws_iam_role_policy_attachment.ec2_ssm \
+  -target=aws_iam_role_policy_attachment.ec2_cw \
+  -target=aws_iam_role_policy_attachment.ec2_dynamo \
+  -target=aws_iam_role_policy_attachment.ec2_elasticache \
+  -target=aws_iam_role_policy_attachment.bastion_ssm \
+  -target=aws_iam_role_policy_attachment.bastion_cloudwatch \
+  -target=aws_iam_role_policy_attachment.bastion_ec2 \
+  -target=aws_iam_role_policy_attachment.bastion_vpc \
+  -target=aws_iam_role_policy_attachment.bastion_rds \
+  -target=aws_iam_role_policy_attachment.bastion_elasticache_mgmt \
+  -target=aws_iam_role_policy_attachment.bastion_dynamodb \
+  -target=aws_iam_role_policy_attachment.bastion_elb \
+  -target=aws_iam_role_policy_attachment.bastion_route53 \
+  -target=aws_iam_role_policy_attachment.bastion_s3 \
+  -target=aws_iam_role_policy.bastion_iam_management \
+  -target=aws_iam_instance_profile.bastion_profile \
+  -target=aws_key_pair.admin_key \
+  -target=aws_instance.bastion \
+  -var-file=terraform.tfvars \
+  -out=tfplan
