@@ -1,23 +1,24 @@
-# iam.tf - Complete IAM configuration for bastion and application layers
-
+# iam.tf - Complete IAM configuration for bastion and application layers with explicit self-policy permissions
 #=======================================================================================================
+# Data source to retrieve AWS account ID
+data "aws_caller_identity" "current" {}
+
 # APPLICATION EC2 ROLE (for app instances in ASG)
 #=======================================================================================================
-
 # EC2 IAM Role for Application Layer
 resource "aws_iam_role" "ec2_role" {
   name = "zalando-ec2-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Effect = "Allow",
-      Principal = { Service = "ec2.amazonaws.com" },
-      Action = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
     }]
   })
-  tags = { 
-    Name = "zalando-ec2-role"
-    Purpose = "Application runtime permissions"
+  tags = {
+    Name        = "zalando-ec2-role"
+    Purpose     = "Application runtime permissions"
     Environment = "production"
   }
 }
@@ -27,17 +28,14 @@ resource "aws_iam_role_policy_attachment" "ec2_ssm" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
-
 resource "aws_iam_role_policy_attachment" "ec2_cw" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
-
 resource "aws_iam_role_policy_attachment" "ec2_dynamo" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
-
 resource "aws_iam_role_policy_attachment" "ec2_elasticache" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess"
@@ -47,10 +45,9 @@ resource "aws_iam_role_policy_attachment" "ec2_elasticache" {
 resource "aws_iam_instance_profile" "app_profile" {
   name = "zalando-app-profile"
   role = aws_iam_role.ec2_role.name
-  
   tags = {
-    Name = "zalando-app-instance-profile"
-    Purpose = "Application EC2 instances"
+    Name        = "zalando-app-instance-profile"
+    Purpose     = "Application EC2 instances"
     Environment = "production"
   }
 }
@@ -58,19 +55,17 @@ resource "aws_iam_instance_profile" "app_profile" {
 #=======================================================================================================
 # BASTION HOST ROLE (for Terraform deployment and admin access)
 #=======================================================================================================
-
 # IAM Role for Bastion Host (Enhanced for Terraform deployment)
 resource "aws_iam_role" "bastion_role" {
   name = "bastion-role-terraform-runner"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
-      Effect = "Allow",
-      Principal = { Service = "ec2.amazonaws.com" },
-      Action = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ec2.amazonaws.com" }
+      Action    = "sts:AssumeRole"
     }]
   })
-  
   tags = {
     Name        = "bastion-terraform-role"
     Purpose     = "Infrastructure deployment via Terraform"
@@ -144,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "bastion_cloudtrail" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
 
-# Custom IAM policy for role management and passing roles
+# Custom IAM policy for role management and passing roles with explicit resource ARNs
 resource "aws_iam_role_policy" "bastion_iam_management" {
   name = "bastion-iam-management-policy"
   role = aws_iam_role.bastion_role.id
@@ -155,32 +150,39 @@ resource "aws_iam_role_policy" "bastion_iam_management" {
       {
         Effect = "Allow"
         Action = [
-          # IAM Role Management
+          # IAM permissions needed to list/read policies on bastion and app roles
+          "iam:ListRolePolicies",
+          "iam:GetRolePolicy",
+          "iam:ListAttachedRolePolicies",
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion"
+        ]
+        Resource = ["*"]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          # Core IAM role management
           "iam:CreateRole",
           "iam:DeleteRole",
           "iam:UpdateRole",
           "iam:GetRole",
           "iam:ListRoles",
-          "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy",
-          "iam:ListAttachedRolePolicies",
+
+          # Instance profile operations
           "iam:CreateInstanceProfile",
           "iam:DeleteInstanceProfile",
           "iam:GetInstanceProfile",
           "iam:ListInstanceProfiles",
           "iam:AddRoleToInstanceProfile",
           "iam:RemoveRoleFromInstanceProfile",
+
+          # Policy attachment and role passing
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
           "iam:PassRole",
-          "iam:CreatePolicy",
-          "iam:DeletePolicy",
-          "iam:GetPolicy",
-          "iam:ListPolicies",
-          "iam:CreatePolicyVersion",
-          "iam:DeletePolicyVersion",
-          "iam:TagRole",
-          "iam:TagInstanceProfile",
-          "iam:TagPolicy",
-          # Additional AWS Services
+
+          # Additional AWS services
           "sns:*",
           "acm:*",
           "kms:*",
@@ -198,7 +200,6 @@ resource "aws_iam_role_policy" "bastion_iam_management" {
 resource "aws_iam_instance_profile" "bastion_profile" {
   name = "bastion-terraform-profile"
   role = aws_iam_role.bastion_role.name
-  
   tags = {
     Name        = "bastion-instance-profile"
     Purpose     = "Bastion host for Terraform deployment"
@@ -209,12 +210,11 @@ resource "aws_iam_instance_profile" "bastion_profile" {
 #=======================================================================================================
 # SHARED RESOURCES (SNS for alerts)
 #=======================================================================================================
-
 # SNS Topic for Alerts
 resource "aws_sns_topic" "alerts" {
   name = "zalando-alerts"
-  tags = { 
-    Name = "ZalandoAlertsTopic"
+  tags = {
+    Name        = "ZalandoAlertsTopic"
     Environment = "production"
   }
 }
@@ -229,7 +229,6 @@ resource "aws_sns_topic_subscription" "email" {
 #=======================================================================================================
 # OUTPUTS
 #=======================================================================================================
-
 output "bastion_role_arn" {
   description = "ARN of the bastion IAM role"
   value       = aws_iam_role.bastion_role.arn
