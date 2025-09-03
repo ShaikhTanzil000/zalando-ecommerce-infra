@@ -6,7 +6,8 @@ resource "aws_lb" "app" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]  # Use existing from security.tf
-  subnets            = [aws_subnet.public.id]          # Use existing public subnet
+
+  subnets = [aws_subnet.public.id, aws_subnet.public_2.id] # Use existing public subnet
 
   tags = {
     Name        = "zalando-alb"

@@ -72,7 +72,7 @@ output "alb_dns_name" {
   value       = aws_lb.app.dns_name
 }
 
-output "route53_zone_id" {
-  description = "Route 53 hosted zone ID"
-  value       = aws_route53_zone.main.zone_id
-}
+#output "route53_zone_id" {
+#  description = "Route 53 hosted zone ID"
+#  value       = aws_route53_zone.main.zone_id
+#}

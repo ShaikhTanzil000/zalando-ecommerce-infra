@@ -24,6 +24,18 @@ resource "aws_subnet" "public" {
   }
 }
 
+
+resource "aws_subnet" "public_2" {
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = var.public_subnet_cidrs[1]
+  availability_zone       = var.availability_zone          # or var.availability_zones[1] if you split AZs
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "zalando-public-subnet-2"
+  }
+}
+
 # 3. Private Subnet
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
@@ -32,6 +44,17 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = "zalando-private-subnet-1"
+  }
+}
+
+
+resource "aws_subnet" "private_2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = var.private_subnet_cidrs[1]
+  availability_zone = var.availability_zone          # or var.availability_zones[1]
+  
+  tags = {
+    Name = "zalando-private-subnet-2"
   }
 }
 
@@ -87,6 +110,12 @@ resource "aws_route_table_association" "public_association" {
   route_table_id = aws_route_table.public.id
 }
 
+resource "aws_route_table_association" "public_association_2" {
+  subnet_id      = aws_subnet.public_2.id
+  route_table_id = aws_route_table.public.id
+}
+
+
 # 9. Private Route Table
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
@@ -101,9 +130,15 @@ resource "aws_route_table" "private" {
   }
 }
 
+
+
 # 10. Associate Private Route Table with Private Subnet
 resource "aws_route_table_association" "private_association" {
   subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private.id
 }
 
+resource "aws_route_table_association" "private_association_2" {
+  subnet_id      = aws_subnet.private_2.id
+  route_table_id = aws_route_table.private.id
+}

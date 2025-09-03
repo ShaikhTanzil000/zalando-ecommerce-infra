@@ -3,7 +3,7 @@
 # RDS DB Subnet Group (places RDS in the private subnets)
 resource "aws_db_subnet_group" "zalando" {
   name       = "zalando-db-subnet-group"
-  subnet_ids = [aws_subnet.private.id]  # Use existing private subnet from Phase 2
+  subnet_ids = [aws_subnet.private.id, aws_subnet.private_2.id]  # Use existing private subnet from Phase 2
   description = "Subnet group for Zalando RDS instances"
   
   tags = {
