@@ -1,10 +1,13 @@
-# iam.tf - Complete IAM configuration for bastion and application layers with explicit self-policy permissions
-#=======================================================================================================
+# iam.tf - Simplified version without inline policies to avoid permissions error
+# Complete IAM configuration for bastion and application layers - FIXED FOR PERMISSION ISSUE
+
 # Data source to retrieve AWS account ID
 data "aws_caller_identity" "current" {}
 
+#=======================================================================================================
 # APPLICATION EC2 ROLE (for app instances in ASG)
 #=======================================================================================================
+
 # EC2 IAM Role for Application Layer
 resource "aws_iam_role" "ec2_role" {
   name = "zalando-ec2-role"
@@ -28,14 +31,17 @@ resource "aws_iam_role_policy_attachment" "ec2_ssm" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
 resource "aws_iam_role_policy_attachment" "ec2_cw" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
+
 resource "aws_iam_role_policy_attachment" "ec2_dynamo" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
 }
+
 resource "aws_iam_role_policy_attachment" "ec2_elasticache" {
   role       = aws_iam_role.ec2_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonElastiCacheFullAccess"
@@ -53,8 +59,9 @@ resource "aws_iam_instance_profile" "app_profile" {
 }
 
 #=======================================================================================================
-# BASTION HOST ROLE (for Terraform deployment and admin access)
+# BASTION HOST ROLE (for Terraform deployment and admin access) - SIMPLIFIED VERSION
 #=======================================================================================================
+
 # IAM Role for Bastion Host (Enhanced for Terraform deployment)
 resource "aws_iam_role" "bastion_role" {
   name = "bastion-role-terraform-runner"
@@ -133,68 +140,22 @@ resource "aws_iam_role_policy_attachment" "bastion_s3" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
-# CloudTrail permissions
-resource "aws_iam_role_policy_attachment" "bastion_cloudtrail" {
-  role       = aws_iam_role.bastion_role.name
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
-}
+# REMOVED: All inline policies that were causing PermissionDenied errors
+# REMOVED: bastion_cloudtrail policy attachment that was causing 10-policy limit
+# REMOVED: bastion_consolidated_permissions inline policy 
+# REMOVED: bastion_iam_management inline policy
 
-# Custom IAM policy for role management and passing roles with explicit resource ARNs
-resource "aws_iam_role_policy" "bastion_iam_management" {
-  name = "bastion-iam-management-policy"
-  role = aws_iam_role.bastion_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          # IAM permissions needed to list/read policies on bastion and app roles
-          "iam:ListRolePolicies",
-          "iam:GetRolePolicy",
-          "iam:ListAttachedRolePolicies",
-          "iam:GetPolicy",
-          "iam:GetPolicyVersion"
-        ]
-        Resource = ["*"]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          # Core IAM role management
-          "iam:CreateRole",
-          "iam:DeleteRole",
-          "iam:UpdateRole",
-          "iam:GetRole",
-          "iam:ListRoles",
-
-          # Instance profile operations
-          "iam:CreateInstanceProfile",
-          "iam:DeleteInstanceProfile",
-          "iam:GetInstanceProfile",
-          "iam:ListInstanceProfiles",
-          "iam:AddRoleToInstanceProfile",
-          "iam:RemoveRoleFromInstanceProfile",
-
-          # Policy attachment and role passing
-          "iam:AttachRolePolicy",
-          "iam:DetachRolePolicy",
-          "iam:PassRole",
-
-          # Additional AWS services
-          "sns:*",
-          "acm:*",
-          "kms:*",
-          "budgets:*",
-          "config:*",
-          "cloudtrail:*"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
+# Current policy count: 10 managed policies (exactly at the limit)
+# 1. AmazonSSMManagedInstanceCore
+# 2. CloudWatchAgentServerPolicy  
+# 3. AmazonEC2FullAccess
+# 4. AmazonVPCFullAccess
+# 5. AmazonRDSFullAccess
+# 6. AmazonElastiCacheFullAccess
+# 7. AmazonDynamoDBFullAccess
+# 8. ElasticLoadBalancingFullAccess
+# 9. AmazonRoute53FullAccess
+# 10. AmazonS3FullAccess
 
 # Instance profile for bastion host
 resource "aws_iam_instance_profile" "bastion_profile" {
@@ -210,6 +171,7 @@ resource "aws_iam_instance_profile" "bastion_profile" {
 #=======================================================================================================
 # SHARED RESOURCES (SNS for alerts)
 #=======================================================================================================
+
 # SNS Topic for Alerts
 resource "aws_sns_topic" "alerts" {
   name = "zalando-alerts"
@@ -229,6 +191,7 @@ resource "aws_sns_topic_subscription" "email" {
 #=======================================================================================================
 # OUTPUTS
 #=======================================================================================================
+
 output "bastion_role_arn" {
   description = "ARN of the bastion IAM role"
   value       = aws_iam_role.bastion_role.arn
@@ -249,3 +212,11 @@ output "app_instance_profile_name" {
   value       = aws_iam_instance_profile.app_profile.name
 }
 
+# WHAT I CHANGED FROM YOUR ORIGINAL VERSION:
+# 1. REMOVED the "bastion_cloudtrail" policy attachment - this was the 11th policy causing the limit error
+# 2. REMOVED both inline policies (bastion_consolidated_permissions and bastion_iam_management) 
+#    - These were causing "not authorized to perform iam:PutRolePolicy" errors
+#    - The bastion role needs special bootstrap permissions to modify itself
+# 3. Kept exactly 10 managed policy attachments to stay within AWS limits
+# 4. This removes some advanced permissions but allows the basic infrastructure to deploy
+# 5. Once the infrastructure is working, you can add additional IAM permissions via AWS console if needed

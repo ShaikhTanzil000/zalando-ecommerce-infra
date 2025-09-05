@@ -16,7 +16,7 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidrs[0]
-  availability_zone       = var.availability_zone
+  availability_zone       = var.availability_zone[0]
   map_public_ip_on_launch = true
 
   tags = {
@@ -28,7 +28,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "public_2" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidrs[1]
-  availability_zone       = var.availability_zone          # or var.availability_zones[1] if you split AZs
+  availability_zone       = var.availability_zone[1]          # or var.availability_zones[1] if you split AZs
   map_public_ip_on_launch = true
 
   tags = {
@@ -40,7 +40,7 @@ resource "aws_subnet" "public_2" {
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidrs[0]
-  availability_zone = var.availability_zone
+  availability_zone = var.availability_zone[0]
 
   tags = {
     Name = "zalando-private-subnet-1"
@@ -51,7 +51,7 @@ resource "aws_subnet" "private" {
 resource "aws_subnet" "private_2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.private_subnet_cidrs[1]
-  availability_zone = var.availability_zone          # or var.availability_zones[1]
+  availability_zone = var.availability_zone[1]          # or var.availability_zones[1]
   
   tags = {
     Name = "zalando-private-subnet-2"

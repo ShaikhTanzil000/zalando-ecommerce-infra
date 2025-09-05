@@ -6,8 +6,8 @@ variable "aws_region" {
 
 variable "availability_zone" {
   description = "Availability Zone for subnets"
-  type        = string
-  default     = "eu-north-1a"     # ← adjust as needed
+  type        = list(string)
+  default     = ["eu-north-1a", "eu-north-1b"]     # ← adjust as needed
 }
 
 
@@ -20,7 +20,7 @@ variable "state_bucket_name" {
 variable "trusted_admin_ip" {
   description = "Your admin IP for SSH"
   type        = string
-  default     = "103.176.156.231/32"  # Change to your public IP
+  default     = "103.132.31.123/32"  # Change to your public IP
 }
 
 
@@ -51,7 +51,7 @@ variable "private_subnet_cidrs" {
 variable "db_username" {
   description = "RDS master username"
   type        = string
-  default     = "admin"
+  default     = "zalando_admin"  #Chaged from Admin
 }
 
 variable "db_name" {
