@@ -81,3 +81,18 @@ variable "alert_email" {
   default     = "admin@example.com"  # Change to your email
 }
 
+#----------------Phase-4---------------------
+
+# Add these variables to your existing variables.tf
+variable "ssh_pub_key" {
+  description = "SSH public key for EC2 access"
+  type        = string
+  default     = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsIQBwtX98sPyhE65m0a0+DT9bvniTdDutKL+OLRr7zXUt0pUzcu45mcN1YHzl69C88g5G+fKrIhKM2ivWLF8GWx3u3xEbDkFJgLNvidFmGzxyk+UuJO30nk8wAE1yS27bKsoPh4XQ6INzYLRxf4VAMvzMqruS55c3OWdLL55CCiT0eYW4rFurmgFo1C++hEe12uE6NIOCa+dZXuHhp3Bw4OTL0rp/GF3MdivOCcHSHpva28rgBvI4wtuKwZmc06isZRyFR1pcb/mkFJ1aBFxTuvx19Y5vGgD/y8Auc4WWoy2PRlmy/0XWjDmv/Oy+ZDSE59NtQvN1IimguO5zhNPZ"  # Replace with your actual key
+}
+
+variable "instance_type" {
+  description = "EC2 instance type for application servers"
+  type        = string
+  default     = "t3.micro"
+}
+

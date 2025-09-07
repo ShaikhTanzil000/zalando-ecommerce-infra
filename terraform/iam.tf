@@ -220,3 +220,71 @@ output "app_instance_profile_name" {
 # 3. Kept exactly 10 managed policy attachments to stay within AWS limits
 # 4. This removes some advanced permissions but allows the basic infrastructure to deploy
 # 5. Once the infrastructure is working, you can add additional IAM permissions via AWS console if needed
+
+
+
+
+
+
+#---THIS IS SUPPOSSED TO GO IN A NEW FILE NAMED IAM.TF BUT FOR PHASE 4
+
+# IAM role for EC2 instances
+resource "aws_iam_role" "app_role" {
+  name = "zalando-app-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM policy for application servers
+resource "aws_iam_policy" "app_policy" {
+  name        = "zalando-app-policy"
+  description = "Policy for zalando application servers"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudwatch:PutMetricData",
+          "cloudwatch:GetMetricStatistics",
+          "cloudwatch:ListMetrics",
+          "logs:PutLogEvents",
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+# Attach custom policy to role
+resource "aws_iam_role_policy_attachment" "app_policy_attachment" {
+  role       = aws_iam_role.app_role.name
+  policy_arn = aws_iam_policy.app_policy.arn
+}
+
+# Attach AWS managed policy for Systems Manager
+resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
+  role       = aws_iam_role.app_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+# Instance profile
+resource "aws_iam_instance_profile" "app_profile" {
+  name = "zalando-app-profile"
+  role = aws_iam_role.app_role.name
+}
+

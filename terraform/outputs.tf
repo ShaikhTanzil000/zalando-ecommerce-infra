@@ -72,7 +72,30 @@ output "alb_dns_name" {
   value       = aws_lb.app.dns_name
 }
 
+#ROUTE53
+
 #output "route53_zone_id" {
 #  description = "Route 53 hosted zone ID"
 #  value       = aws_route53_zone.main.zone_id
 #}
+
+
+#Update of Output file for Phase 4
+
+# Add these outputs to your existing outputs.tf
+
+output "autoscaling_group_name" {
+  description = "Auto Scaling Group name"
+  value       = aws_autoscaling_group.app_asg.name
+}
+
+output "launch_template_id" {
+  description = "Launch Template ID"
+  value       = aws_launch_template.app_lt.id
+}
+
+output "app_security_group_id" {
+  description = "Application Security Group ID"
+  value       = aws_security_group.app_sg.id
+}
+
