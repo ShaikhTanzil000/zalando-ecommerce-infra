@@ -1,0 +1,137 @@
+{
+  "alb_dns_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-app-alb-130307316.eu-north-1.elb.amazonaws.com"
+  },
+  "alb_sg_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-0fe15ffe1f3aa5643"
+  },
+  "app_instance_profile_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-app-profile"
+  },
+  "app_role_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:iam::730335251914:role/zalando-ec2-role"
+  },
+  "app_security_group_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-09986bdf5bcdead28"
+  },
+  "app_sg_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-09986bdf5bcdead28"
+  },
+  "autoscaling_group_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-app-asg"
+  },
+  "bastion_instance_profile_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "bastion-terraform-profile"
+  },
+  "bastion_role_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:iam::730335251914:role/bastion-role-terraform-runner"
+  },
+  "bastion_sg_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-05cae025c1ce6956f"
+  },
+  "dynamodb_table_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-app-data"
+  },
+  "ec2_instance_profile": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-app-profile"
+  },
+  "launch_template_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "lt-0f5f9026645af40be"
+  },
+  "main_site_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://www.ummmaryam.work.gd"
+  },
+  "private_subnet_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "subnet-0c92eaf41ceb3e1ad"
+  },
+  "public_subnet_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "subnet-03b26e9e05a53a0fa"
+  },
+  "rds_endpoint": {
+    "sensitive": false,
+    "type": "string",
+    "value": "terraform-20250907184722777700000006.c56ek4gik8ea.eu-north-1.rds.amazonaws.com:5432"
+  },
+  "rds_sg_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-0c99a2ad0f9d3955e"
+  },
+  "redis_endpoint": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-redis.zbabng.0001.eun1.cache.amazonaws.com"
+  },
+  "redis_sg_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sg-077f51e873ce3f323"
+  },
+  "route53_zone_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "Z0280106YO5Y66N0AJBM"
+  },
+  "sns_topic_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:sns:eu-north-1:730335251914:zalando-alerts"
+  },
+  "ssl_certificate_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:acm:us-east-1:730335251914:certificate/0719a963-c62f-4ed2-b7f9-bd1546c0e094"
+  },
+  "static_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-static-site-ummmaryam.work.gd-940eb429"
+  },
+  "static_bucket_website_endpoint": {
+    "sensitive": false,
+    "type": "string",
+    "value": "zalando-static-site-ummmaryam.work.gd-940eb429.s3-website.eu-north-1.amazonaws.com"
+  },
+  "static_site_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "https://static.ummmaryam.work.gd"
+  },
+  "vpc_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "vpc-04b5c585c8a1e976c"
+  }
+}

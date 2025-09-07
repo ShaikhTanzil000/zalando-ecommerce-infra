@@ -1,17 +1,4 @@
 # Get private subnets (created in Phase 1-2)
-data "aws_subnets" "private" {
-  filter {
-    name   = "vpc-id"
-    values = [aws_vpc.main.id]  # References your existing VPC
-  }
-
-  filter {
-    name   = "tag:Name"
-    values = ["*private*"]  # Wildcard works in filter values, not in tags block
-  }
-}
-
-
 #Commenting below out due to Error this was already done in security.tf but this duplicate this was created for Phase 4
 
 
@@ -74,7 +61,8 @@ resource "aws_autoscaling_group" "app_asg" {
   wait_for_capacity_timeout = "10m"
 
   # Use private subnets for security
-  vpc_zone_identifier = data.aws_subnets.private.ids
+  vpc_zone_identifier = [aws_subnet.private.id,
+    aws_subnet.private_2.id]
 
   # Launch template configuration
   launch_template {

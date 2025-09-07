@@ -65,7 +65,7 @@ variable "db_name" {
 variable "domain_name" {
   description = "Domain name for DNS and certificates (e.g., example.com)"
   type        = string
-  default     = "example.com"  # Change to your actual domain
+  default     = "ummmaryam.work.gd"  # Change to your actual domain
 }
 
 variable "db_password" {
