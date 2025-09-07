@@ -5,57 +5,62 @@ data "aws_subnets" "private" {
     values = [aws_vpc.main.id]  # References your existing VPC
   }
 
-  tags = {
-    Type = "private"
+  filter {
+    name   = "tag:Name"
+    values = ["*private*"]  # Wildcard works in filter values, not in tags block
   }
 }
+
+
+#Commenting below out due to Error this was already done in security.tf but this duplicate this was created for Phase 4
+
 
 # Security group for application servers
-resource "aws_security_group" "app_sg" {
-  name        = "zalando-app-sg"
-  description = "Security group for application servers"
-  vpc_id      = aws_vpc.main.id  # References your existing VPC
+#resource "aws_security_group" "app_sg" {
+#  name        = "zalando-app-sg"
+#  description = "Security group for application servers"
+#  vpc_id      = aws_vpc.main.id  # References your existing VPC
 
   # Allow HTTP traffic from ALB security group
-  ingress {
-    description     = "HTTP from ALB"
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]  # References ALB SG from Phase 3
-  }
+#  ingress {
+#    description     = "HTTP from ALB"
+#    from_port       = 80
+#    to_port         = 80
+#    protocol        = "tcp"
+#    security_groups = [aws_security_group.alb_sg.id]  # References ALB SG from Phase 3
+#  }
 
   # Allow HTTPS traffic from ALB security group
-  ingress {
-    description     = "HTTPS from ALB"
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    security_groups = [aws_security_group.alb_sg.id]
-  }
+#  ingress {
+#    description     = "HTTPS from ALB"
+#    from_port       = 443
+#    to_port         = 443
+#    protocol        = "tcp"
+#    security_groups = [aws_security_group.alb_sg.id]
+#  }
 
   # Allow SSH from bastion host
-  ingress {
-    description     = "SSH from bastion"
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
-    security_groups = [aws_security_group.bastion_sg.id]  # References bastion SG
-  }
+#  ingress {
+#    description     = "SSH from bastion"
+#    from_port       = 22
+#    to_port         = 22
+#    protocol        = "tcp"
+#    security_groups = [aws_security_group.bastion_sg.id]  # References bastion SG
+#  }
 
-  # Allow all outbound traffic
-  egress {
-    description = "All outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+#  # Allow all outbound traffic
+#  egress {
+#    description = "All outbound traffic"
+#    from_port   = 0
+#    to_port     = 0
+#    protocol    = "-1"
+#    cidr_blocks = ["0.0.0.0/0"]
+#  }
 
-  tags = {
-    Name = "zalando-app-sg"
-  }
-}
+#  tags = {
+#    Name = "zalando-app-sg"
+#  }
+#}
 
 # Auto Scaling Group for the application servers
 resource "aws_autoscaling_group" "app_asg" {

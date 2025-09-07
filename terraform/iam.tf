@@ -282,9 +282,12 @@ resource "aws_iam_role_policy_attachment" "ssm_managed_instance_core" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+#Commenting this Phase 4 part out due to error
+
+
 # Instance profile
-resource "aws_iam_instance_profile" "app_profile" {
-  name = "zalando-app-profile"
-  role = aws_iam_role.app_role.name
-}
+#resource "aws_iam_instance_profile" "app_profile" {
+#  name = "zalando-app-profile"
+#  role = aws_iam_role.app_role.name
+#}
 
