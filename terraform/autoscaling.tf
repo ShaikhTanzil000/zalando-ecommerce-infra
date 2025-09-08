@@ -126,7 +126,7 @@ resource "aws_autoscaling_policy" "scale_down" {
 }
 
 # CloudWatch Alarms for Auto Scaling
-resource "aws_cloudwatch_metric_alarm" "high_cpu" {
+resource "aws_cloudwatch_metric_alarm" "asg_high_cpu" {
   alarm_name          = "zalando-high-cpu"
   comparison_operator = "GreaterThanThreshold"
   evaluation_periods  = "2"
@@ -143,7 +143,7 @@ resource "aws_cloudwatch_metric_alarm" "high_cpu" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "low_cpu" {
+resource "aws_cloudwatch_metric_alarm" "asg_low_cpu" {
   alarm_name          = "zalando-low-cpu"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "2"
