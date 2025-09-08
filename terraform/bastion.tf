@@ -19,7 +19,7 @@ resource "aws_key_pair" "admin_key" {
 # 4. EC2 instance definition for the bastion host
 resource "aws_instance" "bastion" {
   ami                    = data.aws_ami.amazon_linux.id
-  instance_type          = "t3.micro"
+  instance_type          = "t3.medium"
   iam_instance_profile = aws_iam_instance_profile.bastion_profile.name
   key_name               = aws_key_pair.admin_key.key_name
   subnet_id              = aws_subnet.public.id
