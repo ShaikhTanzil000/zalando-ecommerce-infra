@@ -142,3 +142,54 @@ output "main_site_url" {
   value       = "https://www.${var.domain_name}"
 }
 
+# Combined outputs for Phase 6 and Phase 7
+# These outputs provide important information for operations and integration
+
+# Phase 6 Outputs - Monitoring & Logging
+output "cloudtrail_bucket_name" {
+  description = "S3 bucket for CloudTrail logs"
+  value       = aws_s3_bucket.trail_bucket.bucket
+}
+
+output "cloudtrail_key_id" {
+  description = "KMS Key ID for CloudTrail"
+  value       = aws_kms_key.cloudtrail_key.key_id
+}
+
+output "app_log_group_name" {
+  description = "CloudWatch Log Group name for application logs"
+  value       = aws_cloudwatch_log_group.app_logs.name
+}
+
+output "logs_kms_key_id" {
+  description = "KMS Key ID for CloudWatch Logs"
+  value       = aws_kms_key.logs_key.key_id
+}
+
+output "cloudwatch_dashboard_url" {
+  description = "CloudWatch dashboard URL"
+  value       = "https://${var.aws_region}.console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.zalando_dashboard.dashboard_name}"
+}
+
+# Phase 7 Outputs - Testing & Validation
+# Note: Commented out until AWS Config resources are created
+# output "config_recorder_name" {
+#   description = "Name of the AWS Config recorder"
+#   value       = aws_config_configuration_recorder.recorder.name
+# }
+
+# output "compliance_dashboard_url" {
+#   description = "AWS Config dashboard URL for compliance monitoring"
+#   value       = "https://${var.aws_region}.console.aws.amazon.com/config/home?region=${var.aws_region}#/dashboard"
+# }
+
+output "testing_endpoints" {
+  description = "Key endpoints for testing"
+  value = {
+    alb_endpoint        = "http://${aws_lb.app.dns_name}"
+    cloudfront_endpoint = "https://${aws_cloudfront_distribution.cdn.domain_name}"
+    rds_endpoint        = aws_db_instance.postgres.endpoint
+    redis_endpoint      = aws_elasticache_cluster.redis.cache_nodes[0].address
+  }
+}
+

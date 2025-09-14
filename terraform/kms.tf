@@ -66,8 +66,11 @@ resource "aws_kms_key_policy" "logs_key_policy" {
           Service = "logs.eu-north-1.amazonaws.com"
         }
         Action = [
+          "kms:Encrypt",
+          "kms:Decrypt",
+          "kms:ReEncrypt*",
           "kms:GenerateDataKey*",
-          "kms:Decrypt"
+          "kms:DescribeKey"
         ]
         Resource = "*"
       }

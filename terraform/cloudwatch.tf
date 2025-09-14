@@ -9,6 +9,8 @@ resource "aws_cloudwatch_log_group" "app_logs" {
   retention_in_days = 14                               # Control costs with reasonable retention
   kms_key_id        = aws_kms_key.logs_key.arn        # Encrypt logs at rest
 
+  depends_on = [aws_kms_key_policy.logs_key_policy]
+
   tags = {
     Name        = "zalando-app-logs"
     Environment = "production"
@@ -29,6 +31,8 @@ resource "aws_cloudwatch_log_group" "web_logs" {
   name              = "/zalando/web"
   retention_in_days = 14
   kms_key_id        = aws_kms_key.logs_key.arn
+
+  depends_on = [aws_kms_key_policy.logs_key_policy]
 
   tags = {
     Name        = "zalando-web-logs"
